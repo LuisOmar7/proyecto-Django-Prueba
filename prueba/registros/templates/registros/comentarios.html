@@ -1,0 +1,53 @@
+{% extends "inicio/encabezado.html" %}
+
+{%block titulo%} Comentarios {%endblock%}
+
+{%block imagen%}
+    {%load static%}
+    {%static 'inicio/images/home.png'%}
+{%endblock%}
+
+{%block descripcion%}
+    <div class='user-info'>
+        Comentarios <span>DSM</span>
+    </div>
+{%endblock%}
+
+
+{%block contenidoHeader%}
+        <!--Encabezdo -->
+        <div class="page-header">
+            <div class="page-title">
+                <h3>Comentarios
+                    <small>Lista de comentarios </small></h3>
+            </div>
+        </div>
+        <!-- /Encabezado-->
+
+{%endblock%}
+
+{%block contenidoPrincipal%}
+
+<table class='table table-bordered table-striped'>
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Comentario</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for comentario in comentarios%}
+        <tr>
+            <td class='text-semibold'>{{comentario.usuario}}</td>
+            <td class='muted'>{{comentario.mensaje}}</td>
+            <td class='muted'>Editar</td>
+            <td class='muted'>Eliminar</td>
+        </tr>
+        {% endfor%}
+    </tbody>
+</table>
+
+{%endblock%}
+

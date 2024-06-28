@@ -9,4 +9,3 @@ def contacto(request):
 
 def formulario(request):
     return render(request, 'inicio/formulario.html')
-
