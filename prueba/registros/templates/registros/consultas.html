@@ -1,6 +1,6 @@
 {% extends "inicio/encabezado.html" %}
 
-{%block titulo%} Comentarios {%endblock%}
+{%block titulo%} Principal {%endblock%}
 
 {%block imagen%}
     {%load static%}
@@ -9,7 +9,7 @@
 
 {%block descripcion%}
     <div class='user-info'>
-        Comentarios <span>DSM</span>
+        Principal <span>DSM</span>
     </div>
 {%endblock%}
 
@@ -18,8 +18,8 @@
         <!--Encabezdo -->
         <div class="page-header">
             <div class="page-title">
-                <h3>Comentarios
-                    <small>Lista de comentarios </small></h3>
+                <h3>Alumnos
+                    <small>Lista de Alumnos </small></h3>
             </div>
         </div>
         <!-- /Encabezado-->
@@ -31,19 +31,23 @@
 <table class='table table-bordered table-striped'>
     <thead>
         <tr>
+            <th>Foto</th>
+            <th>Matricula</th>
             <th>Nombre</th>
-            <th>Comentario</th>
-            <th></th>
-            <th></th>
+            <th>Carrera</th>
+            <th>Turno</th>
         </tr>
     </thead>
     <tbody>
-        {% for comentario in comentarios%}
+        {% for alumno in alumnos%}
         <tr>
-            <td class='text-semibold'>{{comentario.usuario}}</td>
-            <td class='muted'>{{comentario.mensaje}}</td>
-            <td class='muted'> <a href='{%url 'ConsultaIndividual' comentario.id%}'>Editar</td>
-            <td class='muted'> <a href='{%url 'Eliminar' comentario.id%}'>Eliminar</td>
+            <td class='text-center'>
+                <img src='{{alumno.imagen.url}}' alt='' class='img-media'>
+            </td>
+            <td class='text-semibold'>{{alumno.matrucula}}</td>
+            <td class='muted'>{{alumno.nombre}}</td>
+            <td class='muted'>{{alumno.carrera}}</td>
+            <td class='muted'>{{alumno.turno}}</td>
         </tr>
         {% endfor%}
     </tbody>

@@ -1,4 +1,6 @@
+from typing import Any
 from django.contrib import admin
+from django.http import HttpRequest
 from .models import Alumnos
 from .models import Comentario
 from .models import ComentarioContacto
@@ -10,6 +12,16 @@ class AdministrarModelo(admin.ModelAdmin):
     search_fields = ('matrucula', 'nombre', 'carrera', 'turno')
     date_hierarchy = 'created'
     list_filter = ('carrera', 'turno')
+
+    list_per_page = 2
+    list_display_links = ('matrucula', 'nombre')
+    list_editable = ('turno',)
+
+    def get_readonly_fields(self, request, obj=None):
+        if request.user.groups.filter(name='Usuarios').exists():
+            return('matrucula', 'carrera', 'turno')
+        else:
+            return('created', 'update')
 
 admin.site.register(Alumnos,AdministrarModelo)
 
