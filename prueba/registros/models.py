@@ -2,14 +2,39 @@ from django.db import models
 from ckeditor.fields import RichTextField
 
 # Create your models here.
+# models.py
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    carrera = models.CharField(max_length=50, choices=[
+        ('TI', 'Tecnologías de la Información'),
+        ('BIO', 'Biología'),
+        # Agrega más carreras según sea necesario
+    ])
+
+    def __str__(self):
+        return f"{self.user.username} - {self.carrera}"
+    
+class Formacion(models.Model):
+    nombre = models.CharField(max_length=20)
+
+    def __str__(self):
+        return self.nombre
+    
 class Alumnos(models.Model):
     matrucula = models.CharField(max_length=12, verbose_name='Mat')
     nombre = models.TextField()
-    carrera = models.TextField()
+    carrera = models.CharField(max_length=50, choices=[
+        ('TI', 'Tecnologías de la Información'),
+        ('BIO', 'Biología'),
+    ])
     turno = models.CharField(max_length=10)
     imagen = models.ImageField(null=True, upload_to='fotos', verbose_name='Fotografia')
+
     created = models.DateTimeField(auto_now_add=True)
     update = models.DateTimeField(auto_now_add=True)
+    
 
     class Meta:
         verbose_name = 'Alumno'

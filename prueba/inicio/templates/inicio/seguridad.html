@@ -1,0 +1,28 @@
+<html>
+    <body>
+        <form method="GET">
+            Nombre: 
+            <input type='text' name='nombre'/>
+            <input type='submit' name='Buscar'/>
+        </form>
+
+        <h2>Resultado: {{ nombre }}</h2> 
+
+        <!-- BUsqueda -->
+        <script type="application/javascript">
+            var busqueda = new
+            URLSearchParams(document.location.search);
+            if (busqueda.has("nombre")){
+                document.getElementById("resultado").innerHTML
+            = "Resultado: " + busqueda.get("nombre")
+            }
+        </script>
+        <!--FIn de la busqueda-->
+        
+    </body>
+</html>
+
+from registros.models import SexoG
+
+SexoG.objects.create(sexo='Masculino')
+SexoG.objects.create(sexo='Femenino')

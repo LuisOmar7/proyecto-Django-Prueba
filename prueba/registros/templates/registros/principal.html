@@ -27,29 +27,36 @@
 {%endblock%}
 
 {%block contenidoPrincipal%}
-
 <table class='table table-bordered table-striped'>
     <thead>
         <tr>
             <th>Foto</th>
-            <th>Matricula</th>
+            <th>Matrícula</th>
+            {% if mostrar_nombre_carrera %}
             <th>Nombre</th>
             <th>Carrera</th>
+            {% endif %}
+            {% if mostrar_turno %}
             <th>Turno</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for alumno in alumnos%}
+        {% for alumno in alumnos %}
         <tr>
             <td class='text-center'>
                 <img src='{{alumno.imagen.url}}' alt='' class='img-media'>
             </td>
             <td class='text-semibold'>{{alumno.matrucula}}</td>
+            {% if mostrar_nombre_carrera %}
             <td class='muted'>{{alumno.nombre}}</td>
             <td class='muted'>{{alumno.carrera}}</td>
+            {% endif %}
+            {% if mostrar_turno %}
             <td class='muted'>{{alumno.turno}}</td>
+            {% endif %}
         </tr>
-        {% endfor%}
+        {% endfor %}
     </tbody>
 </table>
 

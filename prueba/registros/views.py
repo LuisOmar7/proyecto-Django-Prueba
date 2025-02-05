@@ -9,9 +9,51 @@ from .forms import FormArchivos
 from django.contrib import messages
 
 # Create your views here.
-def registros(request):
-    alumnos=Alumnos.objects.all()
-    return render(request, 'registros/principal.html', {'alumnos':alumnos})
+# views.py
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Alumnos
+
+# views.py
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def lista_alumnos(request):
+    # Verificar pertenencia a grupos
+    is_superuser = request.user.is_superuser
+    is_editor = request.user.groups.filter(name='editores').exists()
+    is_revisor = request.user.groups.filter(name='revisores').exists()
+
+    # Filtrar datos según el grupo
+    if is_superuser:
+        alumnos = Alumnos.objects.all()
+        mostrar_nombre_carrera = True
+        mostrar_turno = True
+    elif is_editor:
+        carrera_asignada = request.user.profile.carrera
+        alumnos = Alumnos.objects.filter(carrera=carrera_asignada)
+        mostrar_nombre_carrera = True
+        mostrar_turno = False
+    elif is_revisor:
+        alumnos = Alumnos.objects.all()  # O ajusta según tus reglas
+        mostrar_nombre_carrera = False
+        mostrar_turno = False
+    else:
+        alumnos = Alumnos.objects.none()
+        mostrar_nombre_carrera = False
+        mostrar_turno = False
+
+    # Pasar variables al contexto
+    return render(request, 'registros/principal.html', {
+        'alumnos': alumnos,
+        'mostrar_nombre_carrera': mostrar_nombre_carrera,
+        'mostrar_turno': mostrar_turno,
+        'is_superuser': is_superuser,
+        'is_editor': is_editor,
+        'is_revisor': is_revisor,
+    })
+
 
 def comentarios(request):
     comentarioss=ComentarioContacto.objects.all()
@@ -99,3 +141,8 @@ def archivos(request):
             messages.error(request, "Error al procesar el formulario")
     else:
         return render(request,"registros/archivos.html",{'archivo':Archivos})
+    
+
+def consultasSQL(request):
+    alumnos=Alumnos.objects.raw('SELECT id, matrucula, nombre, carrera, turno, imagen FROM registros_alumnos WHERE carrera="TI" ORDER BY turno DESC')
+    return render(request, 'registros/consultas.html', {'alumnos':alumnos})

@@ -23,7 +23,7 @@ from registros import views as views_comentarios
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',views_registros.registros, name='Principal'),
+    path('',views_registros.lista_alumnos, name='Principal'),
     path('contacto/', views_registros.contacto, name='Contacto'),
     path('formulario/', views.formulario, name='Formulario'),
     path('cometarios/', views_comentarios.comentarios, name='Comentarios'),
@@ -40,7 +40,8 @@ urlpatterns = [
     path('consultas7', views_registros.consultar7, name='Consultas7'),
     path('consultas8', views_registros.consultar6, name='Consultas6'),
     path('subir', views_registros.archivos, name='Subir'),
-    
+    path('consultasql', views_registros.consultasSQL, name='Consultasql'),
+    path('seguridad', views.seguridad, name='Seguridad'),
 ]
 
 if settings.DEBUG:
