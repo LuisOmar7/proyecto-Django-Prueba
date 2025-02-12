@@ -8,7 +8,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.utils import ImageReader
 from django.http import HttpResponse
 from django.contrib import admin
-from .models import Alumnos
+from .models import Alumnos, Carrera
 
 
 from django.contrib.auth.admin import UserAdmin
@@ -51,6 +51,36 @@ class AdministrarModelo(admin.ModelAdmin):
     list_editable = ('turno',)
     actions = [generar_pdf]
 
+    def carrera_nombre(self, obj):
+        """
+        Método para mostrar el nombre de la carrera en la lista.
+        """
+        return obj.carrera.nombre if obj.carrera else "Sin carrera"
+    carrera_nombre.short_description = 'Carrera'
+
+    def get_queryset(self, request):
+        """
+        Filtra los registros de Alumnos según la carrera asignada al usuario actual.
+        Optimiza la consulta usando select_related.
+        """
+        qs = super().get_queryset(request).select_related('carrera')  # Optimización de consultas
+        user = request.user
+
+        if user.is_superuser:
+            return qs
+
+        # Verificar si el usuario tiene un perfil asignado
+        try:
+            profile = user.profile
+        except Profile.DoesNotExist:
+            return qs.none()  # Devolver un queryset vacío si no hay perfil
+
+        # Filtrar por la carrera asignada en el perfil del usuario
+        if profile.carrera:
+            return qs.filter(carrera=profile.carrera)
+        else:
+            return qs.none()  # Devolver un queryset vacío si no hay carrera asignada
+
 
     def get_readonly_fields(self, request, obj=None):
         # Si se está editando un alumno existente, bloquear ciertos campos
@@ -64,6 +94,11 @@ class AdministrarModelo(admin.ModelAdmin):
             return ()
 
 admin.site.register(Alumnos, AdministrarModelo)
+
+class AdministrarCarreras(admin.ModelAdmin):
+    list_display = ('id', 'nombre')
+
+admin.site.register(Carrera, AdministrarCarreras)
 
 
 class AdministrarComentarios(admin.ModelAdmin):
@@ -83,11 +118,18 @@ class AdministrarComentariosContacto(admin.ModelAdmin):
 
 admin.site.register(ComentarioContacto, AdministrarComentariosContacto)
 
-# Crear un Inline para el modelo Profile
+# Crear un Inline para el modelo Profilefrom django.contrib import admin
+# Inline para el modelo Profile
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
     verbose_name_plural = 'Perfil'
+
+    # Filtrar las carreras disponibles en el campo "carrera"
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "carrera":
+            kwargs["queryset"] = Carrera.objects.all()  # Mostrar todas las carreras registradas
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 # Extender el UserAdmin para incluir el perfil
 class CustomUserAdmin(UserAdmin):
