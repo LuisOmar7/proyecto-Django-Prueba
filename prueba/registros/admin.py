@@ -34,27 +34,34 @@ def generar_pdf(modeladmin, request, queryset):
         p.drawString(100, y - 20, f"Nombre: {alumno.nombre}")
         p.drawString(100, y - 40, f"Carrera: {alumno.carrera}")
         p.drawString(100, y - 60, f"Turno: {alumno.turno}")
-        
-        formaciones = alumno.formacion.all()
-        formaciones_texto = ', '.join([formacion.nombre for formacion in formaciones])
-        p.drawString(100, y - 80, f"Formación: {formaciones_texto}")
-
+      
         p.showPage()
 
     p.save()
     return response
 
 class AdministrarModelo(admin.ModelAdmin):
-    readonly_fields = ('created', 'update')
+    readonly_fields = ('created', 'update')  # Campos de solo lectura
     list_display = ('matrucula', 'nombre', 'carrera', 'turno')
     search_fields = ('matrucula', 'nombre', 'carrera', 'turno')
     date_hierarchy = 'created'
     list_filter = ('carrera', 'turno', 'created')
-
     list_per_page = 5
     list_display_links = ('matrucula', 'nombre')
     list_editable = ('turno',)
     actions = [generar_pdf]
+
+
+    def get_readonly_fields(self, request, obj=None):
+        # Si se está editando un alumno existente, bloquear ciertos campos
+        if obj is not None:
+            if request.user.groups.filter(name="editores").exists():
+                return ('matrucula','carrera', 'turno',) #Lo que si se muestra pero no es editable
+            else:
+                return ('created', 'update', 'imagen') #No se muestran los campos 
+        # Si se está creando un nuevo alumno, no bloquear ningún campo
+        else:
+            return ()
 
 admin.site.register(Alumnos, AdministrarModelo)
 

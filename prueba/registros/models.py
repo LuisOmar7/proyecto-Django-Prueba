@@ -13,14 +13,12 @@ class Profile(models.Model):
         # Agrega más carreras según sea necesario
     ])
 
-    def __str__(self):
-        return f"{self.user.username} - {self.carrera}"
-    
-class Formacion(models.Model):
-    nombre = models.CharField(max_length=20)
+    class Meta:
+        verbose_name = 'Perfil'
+        verbose_name_plural = 'Perfiles'
 
     def __str__(self):
-        return self.nombre
+        return f"{self.user.username} - {self.carrera}"
     
 class Alumnos(models.Model):
     matrucula = models.CharField(max_length=12, verbose_name='Mat')
